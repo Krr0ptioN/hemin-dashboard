@@ -15,6 +15,10 @@ class Product extends Model
         return $this->belongsTo(ProductCategory::class);
     }
 
+    public function orders(): BelongsToMany {
+        return $this->belongsTo(Order::class);
+    }
+
     protected $fillable = [
         'name',
         'description',

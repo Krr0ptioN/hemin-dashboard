@@ -19,8 +19,13 @@ class Order extends Model
         return $this->belongsTo(Branch::class);
     }
 
-    public function creator()
+    public function customer()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'customer_id');
     }
+
+    public function products(): BelongsToMany {
+        return $this->belongsToMany(Product::class);
+    }
+
 }
