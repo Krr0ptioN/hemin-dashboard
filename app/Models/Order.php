@@ -10,8 +10,14 @@ class Order extends Model
     /** @use HasFactory<\Database\Factories\OrderFactory> */
     use HasFactory;
 
-    protected $casts = [
-        'images' => 'array',
+
+    protected $fillable = [
+        'status',
+        'order_number',
+        'total_amount',
+        'payment_type',
+        'customer_id',
+        'branch_id',
     ];
 
     public function branch()
@@ -24,8 +30,8 @@ class Order extends Model
         return $this->belongsTo(User::class, 'customer_id');
     }
 
-    public function products(): BelongsToMany {
-        return $this->belongsToMany(Product::class);
+    public function orderProducts()
+    {
+        return $this->hasMany(OrderProduct::class);
     }
-
 }
