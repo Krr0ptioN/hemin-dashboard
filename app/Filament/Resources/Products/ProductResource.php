@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Products;
 
+use App\Filament\NavigationGroup;
+use App\Filament\Resources\ProductCategories\ProductCategoryResource;
 use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
@@ -15,14 +17,17 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Product;
 
-    protected static ?string $recordTitleAttribute = 'product';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBox;
+
+    protected static ?string $recordTitleAttribute = 'Product';
 
     public static function form(Schema $schema): Schema
     {
@@ -41,9 +46,7 @@ class ProductResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [ ];
     }
 
     public static function getPages(): array
