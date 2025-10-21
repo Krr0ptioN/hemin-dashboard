@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Order;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -20,8 +21,14 @@ class StatsOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Sell', '192 TRY'),
-            Stat::make('Orders count', '12'),
+            Stat::make(
+                label: 'Total Sales',
+                value: Order::query()->sum('total_amount'),
+            ),
+            Stat::make(
+                label: 'Total Orders',
+                value: Order::query()->count(),
+            ),
         ];
     }
 }
