@@ -53,26 +53,33 @@ class OrderForm
                                         ->label('Amount')
                                         ->numeric()
                                         ->default(1)
-                                        ->required(),
+                                        ->required()
+                                        ->reactive()
+                                        ->live(debounce: 500)
+                                        ->afterStateUpdated(function (callable $set, callable $get) {
+                                            $unitPrice = (float) $get('unit_price_before_tax');
+                                            $amount = (int) $get('amount');
+                                            $set('price_before_tax', $amount * $unitPrice);
+                                        }),
 
                                     TextInput::make('unit_price_before_tax')
                                         ->label('Unit Price (Before Tax)')
                                         ->numeric()
                                         ->suffix('₺')
                                         ->required()
-                                        ->reactive(),
+                                        ->reactive()
+                                        ->live(debounce: 500)
+                                        ->afterStateUpdated(function (callable $set, callable $get) {
+                                            $unitPrice = (float) $get('unit_price_before_tax');
+                                            $amount = (int) $get('amount');
+                                            $set('price_before_tax', $amount * $unitPrice);
+                                        }),
 
                                     TextInput::make('price_before_tax')
                                         ->label('Price (Before Tax)')
                                         ->numeric()
                                         ->suffix('₺')
-                                        ->dehydrated(false)
-                                        ->reactive()
-                                        ->afterStateHydrated(function ($component, $state, $get) {
-                                            $component->state(
-                                                (int) $get('amount') * (float) $get('price_before_tax')
-                                            );
-                                        })->disabled(),
+                                        ->disabled(),
                                 ])
                         ]),
                         Step::make('Summary')->schema([
@@ -86,20 +93,23 @@ class OrderForm
                                         'Code' => $branch?->code,
                                     ];
                             }),
-                            RepeatableEntry::make('orderProducts')
+                            Repeater::make('orderProducts')
                                 ->table([
                                     TableColumn::make('Product'),
                                     TableColumn::make('Amount'),
                                     TableColumn::make('Unit Price (Before Tax)'),
                                     TableColumn::make('Price (Before Tax)'),
                                 ])
+                                ->disabled()
                                 ->schema([
-                                    TextEntry::make('product_id')
+                                    Select::make('product_id')
                                         ->label('Product')
-                                        ->state(fn ($state) => \App\Models\Product::find($state)?->name),
-                                    TextEntry::make('amount')->label('Amount'),
-                                    TextEntry::make('unit_price_before_tax')->label('Unit Price (₺)'),
-                                    TextEntry::make('price_before_tax')->label('Total Price (₺)'),
+                                        ->options(\App\Models\Product::pluck('name', 'id'))
+                                        ->disabled(),
+
+                                    TextInput::make('amount')->label('Amount')->disabled(),
+                                    TextInput::make('unit_price_before_tax')->label('Unit Price (₺)')->disabled(),
+                                    TextInput::make('price_before_tax')->label('Total Price (₺)')->disabled(),
                                 ]),
                         ]),
                     ]),
